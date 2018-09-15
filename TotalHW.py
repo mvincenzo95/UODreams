@@ -139,14 +139,14 @@ class KeepForm(Form):
         #BonusTalismansNB
         self.BonusNB = TextBox()
         self.BonusNB.Size = Size(30,15)
-        self.BonusNB.Location = Point(160,115)
+        self.BonusNB.Location = Point(151,119)
         self.BonusNB.Text = "{0}".format(self.var['minBonus'])
         
         #BonusTalismanNBB
         self.BonusNBB = Button()
         self.BonusNBB.Text = "Set"
         self.BonusNBB.Size = Size(80,20)
-        self.BonusNBB.Location = Point(210,110)
+        self.BonusNBB.Location = Point(210,115)
         self.BonusNBB.Click += self.setNormalBonus
         
         #BonusTalismansE
@@ -158,7 +158,7 @@ class KeepForm(Form):
         #BonusTalismansEB
         self.BonusEB = TextBox()
         self.BonusEB.Size = Size(30,15)
-        self.BonusEB.Location = Point(160,135)
+        self.BonusEB.Location = Point(151,139)
         self.BonusEB.Text = "{0}".format(self.var['exBonus'])
         
         #BonusTalismanEBB
@@ -195,7 +195,7 @@ class KeepForm(Form):
         #MoveAmountT
         self.MoveAmountT = TextBox()
         self.MoveAmountT.Size = Size(40,15)
-        self.MoveAmountT.Location = Point(160,215)
+        self.MoveAmountT.Location = Point(156,219)
         self.MoveAmountT.Text = "{0} ".format(int(self.var['moveAmount']))
         
         #MoveAmountB
@@ -443,18 +443,27 @@ class KeepForm(Form):
         self.Update()
         self.BonusNB.Text = "{0}".format(self.var['minBonus'])
         self.BonusNB.ReadOnly = True
+        self.BonusNB.BorderStyle = BorderStyle.None
+        self.BonusNB.BackColor = Color.FromArgb(25,25,25)
+        self.BonusNB.ForeColor = Color.FromArgb(231,231,231)
     
     def setExecBonus(self, send, args):
         self.var['exBonus'] = int(self.BonusEB.Text)
         self.Update()
         self.BonusEB.Text = "{0}".format(self.var['exBonus'])
         self.BonusEB.ReadOnly = True
+        self.BonusEB.BorderStyle = BorderStyle.None
+        self.BonusEB.BackColor = Color.FromArgb(25,25,25)
+        self.BonusEB.ForeColor = Color.FromArgb(231,231,231)
     
     def setMoveAmount(self, send, args):
         self.var['moveAmount'] = int(self.MoveAmountT.Text)
         self.Update()
         self.MoveAmountT.Text = "{0} ".format(self.var['moveAmount'])
         self.MoveAmountT.ReadOnly = True
+        self.MoveAmountT.BorderStyle = BorderStyle.None
+        self.MoveAmountT.BackColor = Color.FromArgb(25,25,25)
+        self.MoveAmountT.ForeColor = Color.FromArgb(231,231,231)
         
     def OnTick2(self, send, args):
         self.var["actualTime"] = datetime.now() - self.var["start"]
