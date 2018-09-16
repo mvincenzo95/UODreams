@@ -29,16 +29,16 @@ from datetime import datetime
 from System.IO import Directory, Path, File
 from System.Collections import *
 from System.Drawing import Point, Color, Size, Font, FontStyle
-from System.Windows.Forms import (LinkLabel, Application, Button, Timer, Form, ComboBox, 
+from System.Windows.Forms import (LinkLabel, CheckBox, Application, Button, Timer, Form, ComboBox, 
     BorderStyle, GroupBox, Label, TextBox, ListBox, Panel, RadioButton,
     FlatStyle)
 from System.ComponentModel import Container
 
     
 ###User settings
-TrashDelay = 800
-DragDelay = 1000
-TimeoutOnWaitAction = 1000
+TrashDelay = 500
+DragDelay = 600
+TimeoutOnWaitAction = 500
 ###
 
 #General settings
@@ -46,16 +46,20 @@ QuestGiverSerial = 0x00006AC1
 ContextQuestToggleID = 5
 TrashCan = 0x4013FA9E
 BoltID = 0x1BFB
-Quests = 0
 ##
 
 class KeepForm(Form):
     ScriptName = 'TotalHW by Rosikcool'
-    var = {'start' : datetime.now(), 'recallBank' : 0, 'restockBolt' : 0, 
+    
+    var = {'number' : 1, 'checked' : False, 'start' : datetime.now(), 'recallBank' : 0, 'restockBolt' : 0, 
     'recallHW' : 0, 'enterHW' : 0, 'goingToNPC' : 0, 'deliver' : 0, 'reloadBeetle' : 0,
     'goBack' : 0, 'checkReward' : 0, 'completedQuest' : 0, 'kitHwFound' : 0, 'kitYewFound' : 0,
     'oldTime' : "0001-01-01 00:00:00", 'actualTime' : "0001-01-01 00:00:00", 'beetleSerial' : 0, 'containerBackpack' : 0, 'containerBank' : 0,
-    'runebook' : 0, 'minBonus' : 0, 'exBonus' : 0, 'moveAmount' : 0}
+    'runebook' : 0, 'minBonus' : 0, 'exBonus' : 0, 'moveAmount' : 0 }
+    
+    props = {'Jdamageincrease' : 0 , 'Jdefensechanceincrease' : 0, 'Jdexteritybonus' : 0, 'Jenhancepotions' : 0,
+    'Jfastercastrecovery' : 0, 'Jfastercasting' : 0, 'Jhitchanceincrease' : 0, 'Jintelligencebonus' : 0, 
+    'Jlowermanacost' : 0, 'Jlowerreagentcost' : 0, 'Jluck' : 0, 'Jspelldamageincrease' : 0, 'Jstrengthbonus' : 0}
     
     def __init__(self):
         self.BackColor = Color.FromArgb(25,25,25)
@@ -65,6 +69,7 @@ class KeepForm(Form):
         self.CenterToScreen()
         self.TopMost = True
         self.LoadFile()
+        self.jf = Form()
         
         #InfoLabel
         self.Info = Label()
@@ -153,7 +158,7 @@ class KeepForm(Form):
         self.BonusE = Label()
         self.BonusE.Size = Size(150,15)
         self.BonusE.Location = Point(0,140)
-        self.BonusE.Text = "Talisman: min exept bonus: "
+        self.BonusE.Text = "Talisman: min except bonus: "
         
         #BonusTalismansEB
         self.BonusEB = TextBox()
@@ -226,6 +231,16 @@ class KeepForm(Form):
         self.btnStart.FlatAppearance.BorderSize = 1
         self.btnDonate.Click += self.linkDonatePressed
         
+        #JewelButton
+        self.btnJewel = Button()
+        self.btnJewel.Text = 'Jewels'
+        self.btnJewel.BackColor = Color.FromArgb(50,50,50)
+        self.btnJewel.Size = Size(50, 30)
+        self.btnJewel.Location = Point(60, 260)
+        self.btnJewel.FlatStyle = FlatStyle.Flat
+        self.btnJewel.FlatAppearance.BorderSize = 1
+        self.btnJewel.Click += self.jewelPressed
+        
         #ResetButton
         self.btnReset = Button()
         self.btnReset.Text = 'Reset Stats'
@@ -261,7 +276,8 @@ class KeepForm(Form):
         self.Controls.Add(self.btnStart)   
         self.Controls.Add(self.btnReset)
         self.Controls.Add(self.btnDonate)
-            
+        self.Controls.Add(self.btnJewel)    
+        
     def btnStartPressed(self, send, args):
         self.var["beetleSerial"] = self.PetT.Text
         self.var["containerBank"] = self.ContainerBT.Text
@@ -271,35 +287,13 @@ class KeepForm(Form):
         self.var["runebook"] = self.RunebookT.Text
         
         self.Flags()
-        
-        self.Controls.Remove(self.Info)
-        self.Controls.Remove(self.Pet)
-        self.Controls.Remove(self.PetT)
-        self.Controls.Remove(self.ContainerB)
-        self.Controls.Remove(self.ContainerBT)
-        self.Controls.Remove(self.ContainerBank)
-        self.Controls.Remove(self.ContainerBankT)
-        self.Controls.Remove(self.Runebook)
-        self.Controls.Remove(self.RunebookT)
-        self.Controls.Remove(self.Hint)
-        self.Controls.Remove(self.BonusN)
-        self.Controls.Remove(self.BonusE)
-        self.Controls.Remove(self.BonusNB)
-        self.Controls.Remove(self.BonusNBB)
-        self.Controls.Remove(self.BonusEB)
-        self.Controls.Remove(self.BonusEBB)
-        self.Controls.Remove(self.Trash)
-        self.Controls.Remove(self.Drag)
-        self.Controls.Remove(self.Timeout)
-        self.Controls.Remove(self.MoveAmount)
-        self.Controls.Remove(self.MoveAmountT)
-        self.Controls.Remove(self.MoveAmountB)
-        self.Controls.Remove(self.btnStart)
-        self.Controls.Remove(self.btnReset)
-        self.Controls.Remove(self.btnDonate)
-        
+       
+        while len(self.Controls) > 0:
+            for ctr in self.Controls:
+                self.Controls.Remove(ctr)
+
         self.LoadFile()
-        self.var["oldTime"] = datetime.strptime(str(self.var["oldTime"]),"%Y-%m-%d %H:%M:%S")
+        #self.var["oldTime"] = datetime.strptime(str(self.var["oldTime"]),"%Y-%m-%d %H:%M:%S")
         
         #TimePassed
         self.TimePassed = Label()
@@ -405,7 +399,7 @@ class KeepForm(Form):
         self.Flags()
         self.Update()
         self.Step.Text = "Finish."
-        self.time2.Enabled = False
+        #self.time2.Enabled = False
         self.time.Enabled = False
         self.Update()
         self.Controls.Remove(self.btnStop)
@@ -464,6 +458,297 @@ class KeepForm(Form):
         self.MoveAmountT.BorderStyle = BorderStyle.None
         self.MoveAmountT.BackColor = Color.FromArgb(25,25,25)
         self.MoveAmountT.ForeColor = Color.FromArgb(231,231,231)
+    
+    def jewelPressed(self, send, args):
+        self.jf = Form()
+        self.jf.BackColor = Color.FromArgb(25,25,25)
+        self.jf.ForeColor = Color.FromArgb(231,231,231)
+        self.jf.Size = Size(270, 370)
+        self.jf.Text = '{0}'.format(self.ScriptName)
+        self.jf.TopMost = True
+        
+        #InfoLabel
+        self.Info = Label()
+        self.Info.Size = Size(170,15)
+        self.Info.Location = Point(0,0)
+        self.Info.Text = "Jewel Settings.         Take jewels "
+        
+        #CheckBox
+        self.check = CheckBox()
+        self.check.Width = 90
+        self.check.Location = Point(171,-5)
+        self.check.Checked = eval(self.var['checked'])
+        self.check.CheckedChanged += self.checkedBox
+        
+        #DamageIncrease
+        self.damageIncrease = Label()
+        self.damageIncrease.Size = Size(140,15)
+        self.damageIncrease.Location = Point(0,20)
+        self.damageIncrease.Text = "Damage Increase: "
+        
+        #DamageIncreaseV
+        self.damageIncreaseV = TextBox()
+        self.damageIncreaseV.Size = Size(30,15)
+        self.damageIncreaseV.Location = Point(150,19)
+        self.damageIncreaseV.Text = "{0}".format(self.props['Jdamageincrease'])
+        self.damageIncreaseV.ReadOnly = True
+        
+        #DefenseChanceIncrease
+        self.defenseChanceIncrease = Label()
+        self.defenseChanceIncrease.Size = Size(140,15)
+        self.defenseChanceIncrease.Location = Point(0,40)
+        self.defenseChanceIncrease.Text = "Defense Chance Increase: "
+        
+        #DefenseChanceIncreaseV
+        self.defenseChanceIncreaseV = TextBox()
+        self.defenseChanceIncreaseV.Size = Size(30,15)
+        self.defenseChanceIncreaseV.Location = Point(150,39)
+        self.defenseChanceIncreaseV.Text = "{0}".format(self.props['Jdefensechanceincrease'])
+        
+        #DexterityBonus
+        self.dexterityBonus = Label()
+        self.dexterityBonus.Size = Size(140,15)
+        self.dexterityBonus.Location = Point(0,60)
+        self.dexterityBonus.Text = "Dexterity Bonus: "
+        
+        #DexterityBonusV
+        self.dexterityBonusV = TextBox()
+        self.dexterityBonusV.Size = Size(30,15)
+        self.dexterityBonusV.Location = Point(150,59)
+        self.dexterityBonusV.Text = "{0}".format(self.props['Jdexteritybonus'])
+        
+        #EnhancePotions
+        self.enhancePotions = Label()
+        self.enhancePotions.Size = Size(140,15)
+        self.enhancePotions.Location = Point(0,80)
+        self.enhancePotions.Text = "Enhance Potions: "
+        
+        #EnhancePotionsV
+        self.enhancePotionsV = TextBox()
+        self.enhancePotionsV.Size = Size(30,15)
+        self.enhancePotionsV.Location = Point(150,79)
+        self.enhancePotionsV.Text = "{0}".format(self.props['Jenhancepotions'])
+        
+        #FasterCastRecovery
+        self.fasterCastRecovery = Label()
+        self.fasterCastRecovery.Size = Size(140,15)
+        self.fasterCastRecovery.Location = Point(0,100)
+        self.fasterCastRecovery.Text = "Faster Cast Recovery: "
+        
+        #FasterCastRecoveryV
+        self.fasterCastRecoveryV = TextBox()
+        self.fasterCastRecoveryV.Size = Size(30,15)
+        self.fasterCastRecoveryV.Location = Point(150,99)
+        self.fasterCastRecoveryV.Text = "{0}".format(self.props['Jfastercastrecovery'])
+        
+        #FasterCasting
+        self.fasterCasting = Label()
+        self.fasterCasting.Size = Size(140,15)
+        self.fasterCasting.Location = Point(0,120)
+        self.fasterCasting.Text = "Faster Casting: "
+        
+        #FasterCastingV
+        self.fasterCastingV = TextBox()
+        self.fasterCastingV.Size = Size(30,15)
+        self.fasterCastingV.Location = Point(150,119)
+        self.fasterCastingV.Text = "{0}".format(self.props['Jfastercasting'])
+        
+        #HitChanceIncrease
+        self.hitChanceIncrease = Label()
+        self.hitChanceIncrease.Size = Size(140,15)
+        self.hitChanceIncrease.Location = Point(0,140)
+        self.hitChanceIncrease.Text = "Hit Chance Increase: "
+        
+        #HitChanceIncreaseV
+        self.hitChanceIncreaseV = TextBox()
+        self.hitChanceIncreaseV.Size = Size(30,15)
+        self.hitChanceIncreaseV.Location = Point(150,139)
+        self.hitChanceIncreaseV.Text = "{0}".format(self.props['Jhitchanceincrease'])
+        
+        #IntelligenceBonus
+        self.intelligenceBonus = Label()
+        self.intelligenceBonus.Size = Size(140,15)
+        self.intelligenceBonus.Location = Point(0,160)
+        self.intelligenceBonus.Text = "Intelligence Bonus: "
+        
+        #IntelligenceBonusV
+        self.intelligenceBonusV = TextBox()
+        self.intelligenceBonusV.Size = Size(30,15)
+        self.intelligenceBonusV.Location = Point(150,159)
+        self.intelligenceBonusV.Text = "{0}".format(self.props['Jintelligencebonus'])
+        
+        #LowerManaCost
+        self.lowerManaCost = Label()
+        self.lowerManaCost.Size = Size(140,15)
+        self.lowerManaCost.Location = Point(0,180)
+        self.lowerManaCost.Text = "Lower Mana Cost: "
+        
+        #LowerManaCostV
+        self.lowerManaCostV = TextBox()
+        self.lowerManaCostV.Size = Size(30,15)
+        self.lowerManaCostV.Location = Point(150,179)
+        self.lowerManaCostV.Text = "{0}".format(self.props['Jlowermanacost'])
+        
+        #LowerReagentCost
+        self.lowerReagentCost = Label()
+        self.lowerReagentCost.Size = Size(140,15)
+        self.lowerReagentCost.Location = Point(0,200)
+        self.lowerReagentCost.Text = "Lower Reagent Cost: "
+        
+        #LowerReagentCostV
+        self.lowerReagentCostV = TextBox()
+        self.lowerReagentCostV.Size = Size(30,15)
+        self.lowerReagentCostV.Location = Point(150,199)
+        self.lowerReagentCostV.Text = "{0}".format(self.props['Jlowerreagentcost'])
+        
+        #Luck
+        self.luck = Label()
+        self.luck.Size = Size(140,15)
+        self.luck.Location = Point(0,220)
+        self.luck.Text = "Luck: "
+        
+        #LuckV
+        self.luckV = TextBox()
+        self.luckV.Size = Size(30,15)
+        self.luckV.Location = Point(150,219)
+        self.luckV.Text = "{0}".format(self.props['Jluck'])
+        
+        #SpellDamageIncrease
+        self.spellDamageIncrease = Label()
+        self.spellDamageIncrease.Size = Size(140,15)
+        self.spellDamageIncrease.Location = Point(0,240)
+        self.spellDamageIncrease.Text = "Spell Damage Increase: "
+        
+        #SpellDamageIncreaseV
+        self.spellDamageIncreaseV = TextBox()
+        self.spellDamageIncreaseV.Size = Size(30,15)
+        self.spellDamageIncreaseV.Location = Point(150,239)
+        self.spellDamageIncreaseV.Text = "{0}".format(self.props['Jspelldamageincrease'])
+        
+        #StrengthBonus
+        self.strengthBonus = Label()
+        self.strengthBonus.Size = Size(140,15)
+        self.strengthBonus.Location = Point(0,260)
+        self.strengthBonus.Text = "Strength Bonus: "
+        
+        #StrengthBonusV
+        self.strengthBonusV = TextBox()
+        self.strengthBonusV.Size = Size(30,15)
+        self.strengthBonusV.Location = Point(150,259)
+        self.strengthBonusV.Text = "{0}".format(self.props['Jstrengthbonus'])
+        
+        #Number
+        self.number = Label()
+        self.number.Size = Size(140,15)
+        self.number.Location = Point(0,280)
+        self.number.Text = "How much of them at least: "
+        
+        #NumberV
+        self.numberV = TextBox()
+        self.numberV.Size = Size(30,15)
+        self.numberV.Location = Point(150,279)
+        self.numberV.Text = "{0}".format(self.var['number'])
+        
+        #CloseButton
+        self.btnClose = Button()
+        self.btnClose.Text = 'Close'
+        self.btnClose.BackColor = Color.FromArgb(50,50,50)
+        self.btnClose.Size = Size(50, 30)
+        self.btnClose.Location = Point(80, 300)
+        self.btnClose.FlatStyle = FlatStyle.Flat
+        self.btnClose.FlatAppearance.BorderSize = 1
+        self.btnClose.Click += self.btnClosePressed
+        
+        self.jf.Controls.Add(self.Info)
+        self.jf.Controls.Add(self.damageIncrease)
+        self.jf.Controls.Add(self.damageIncreaseV)
+        self.jf.Controls.Add(self.defenseChanceIncrease)
+        self.jf.Controls.Add(self.defenseChanceIncreaseV)
+        self.jf.Controls.Add(self.dexterityBonus)
+        self.jf.Controls.Add(self.dexterityBonusV)
+        self.jf.Controls.Add(self.enhancePotions)
+        self.jf.Controls.Add(self.enhancePotionsV)
+        self.jf.Controls.Add(self.fasterCastRecovery)
+        self.jf.Controls.Add(self.fasterCastRecoveryV)
+        self.jf.Controls.Add(self.fasterCasting)
+        self.jf.Controls.Add(self.fasterCastingV)
+        self.jf.Controls.Add(self.hitChanceIncrease)
+        self.jf.Controls.Add(self.hitChanceIncreaseV)
+        self.jf.Controls.Add(self.intelligenceBonus)
+        self.jf.Controls.Add(self.intelligenceBonusV)
+        self.jf.Controls.Add(self.lowerManaCost)
+        self.jf.Controls.Add(self.lowerManaCostV)
+        self.jf.Controls.Add(self.lowerReagentCost)
+        self.jf.Controls.Add(self.lowerReagentCostV)
+        self.jf.Controls.Add(self.luck)
+        self.jf.Controls.Add(self.luckV)
+        self.jf.Controls.Add(self.spellDamageIncrease)
+        self.jf.Controls.Add(self.spellDamageIncreaseV)
+        self.jf.Controls.Add(self.strengthBonus)
+        self.jf.Controls.Add(self.strengthBonusV)
+        self.jf.Controls.Add(self.btnClose)
+        self.jf.Controls.Add(self.number)
+        self.jf.Controls.Add(self.numberV)
+        self.jf.Controls.Add(self.check)
+        
+        if self.check.Checked:
+            for ctl in self.jf.Controls:
+                if ctl.GetType() == TextBox:
+                    ctl.ReadOnly = False
+                    ctl.BorderStyle = BorderStyle.Fixed3D
+                    ctl.ResetBackColor()
+                    ctl.ResetForeColor()
+                    
+        else:
+            for ctl in self.jf.Controls:
+                if ctl.GetType() == TextBox:
+                    ctl.ReadOnly = True
+                    ctl.BorderStyle = BorderStyle.None
+                    ctl.BackColor = Color.FromArgb(25,25,25)
+                    ctl.ForeColor = Color.FromArgb(231,231,231) 
+        
+        self.jf.ShowDialog() 
+   
+   
+    def btnClosePressed(self,send,args):
+        while len(self.jf.Controls) > 0:
+            for ctr in self.jf.Controls:
+                self.jf.Controls.Remove(ctr)
+        self.var['number'] = int(self.numberV.Text)
+        self.var['checked'] = str(self.check.Checked)
+        self.props['Jdamageincrease'] = int(self.damageIncreaseV.Text)
+        self.props['Jdefensechanceincrease'] = int(self.defenseChanceIncreaseV.Text)
+        self.props['Jenhancepotions'] = int(self.enhancePotionsV.Text)
+        self.props['Jfastercastrecovery'] = int(self.fasterCastRecoveryV.Text)
+        self.props['Jfastercasting'] = int(self.fasterCastingV.Text)
+        self.props['Jhitchanceincrease'] = int(self.hitChanceIncreaseV.Text)
+        self.props['Jintelligencebonus'] = int(self.intelligenceBonusV.Text)
+        self.props['Jlowermanacost'] = int(self.lowerManaCostV.Text)
+        self.props['Jlowerreagentcost'] = int(self.lowerReagentCostV.Text)
+        self.props['Jluck'] = int(self.luckV.Text)
+        self.props['Jspelldamageincrease'] = int(self.spellDamageIncreaseV.Text)
+        self.props['Jstrengthbonus'] = int(self.strengthBonusV.Text)
+        self.props['Jdexteritybonus'] = int(self.dexterityBonusV.Text)
+        self.Update()
+        
+        self.jf.Close()
+        
+    def checkedBox(self,send,args):
+        if self.check.Checked:
+            for ctl in self.jf.Controls:
+                if ctl.GetType() == TextBox:
+                    ctl.ReadOnly = False
+                    ctl.BorderStyle = BorderStyle.Fixed3D
+                    ctl.ResetBackColor()
+                    ctl.ResetForeColor()
+                    
+        else:
+            for ctl in self.jf.Controls:
+                if ctl.GetType() == TextBox:
+                    ctl.ReadOnly = True
+                    ctl.BorderStyle = BorderStyle.None
+                    ctl.BackColor = Color.FromArgb(25,25,25)
+                    ctl.ForeColor = Color.FromArgb(231,231,231) 
         
     def OnTick2(self, send, args):
         self.var["actualTime"] = datetime.now() - self.var["start"]
@@ -665,8 +950,9 @@ class KeepForm(Form):
                         else:
                             self.var["kitHwFound"] = int(self.var["kitHwFound"]) +1
                         Misc.Pause(DragDelay)
-                    #elif rewcontain.ItemID == 0x108A or rewcontain.ItemID == 0x1F09 or rewcontain.ItemID == 0x1F06 or rewcontain.ItemID == 0x1086:
-                        #self.CheckJewels(rewcontain)  
+                    elif rewcontain.ItemID == 0x108A or rewcontain.ItemID == 0x1F09 or rewcontain.ItemID == 0x1F06 or rewcontain.ItemID == 0x1086:
+                        if eval(self.var['checked']):
+                            self.CheckJewels(rewcontain)  
                     elif "Talisman" in rewcontain.Name:
                         self.CheckTalisman(rewcontain)
                 Items.Move(backpackItems, Items.FindBySerial(TrashCan), 0) 
@@ -676,43 +962,49 @@ class KeepForm(Form):
     def CheckJewels(self,jewel):
         ContainerBackpack = int(self.var['containerBackpack'],16)
         Items.WaitForProps(jewel, TimeoutOnWaitAction)
-        if len(Items.GetPropStringList(jewel)) >= 6:
-            if Items.GetPropValue(jewel.Serial, "Faster Cast Recovery") >= 2:
+        if len(Items.GetPropStringList(jewel)) >= (int(self.var['number'])+2):
+            found = 0
+            for jewelProp in Items.GetPropStringList(jewel):
+                for prop in self.props:
+                    if (prop.replace("J","").lower() in jewelProp.replace(" ","").lower()) and int(self.props[prop]) > 0:
+                        if Items.GetPropValue(jewel,jewelProp) >= int(self.props[prop]):
+                            found = found+1
+                if found >= int(self.var['number']):
+                    break
+            if found >= int(self.var['number']):
                 Items.Move(jewel, Items.FindBySerial(ContainerBackpack), 0)
-                Misc.Pause(DragDelay)
-            elif Items.GetPropValue(jewel.Serial, "Enhance Potions") >= 15:
-                Items.Move(jewel, Items.FindBySerial(ContainerBackpack), 0)
-                Misc.Pause(DragDelay)
+                Misc.Pause(DragDelay)      
         
     def CheckTalisman(self, tal):
         ContainerBackpack = int(self.var['containerBackpack'],16)
         Items.WaitForProps(tal, TimeoutOnWaitAction)
         MinNormalBonus = int(self.var['minBonus'])
         MinExBonus = int(self.var['exBonus'])
-        if Items.GetPropValue(tal.Serial, "Tinkering Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Tinkering Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)   
-        elif Items.GetPropValue(tal.Serial, "Fletching Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Fletching Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)           
-        elif Items.GetPropValue(tal.Serial, "Tailoring Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Tailoring Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)       
-        elif Items.GetPropValue(tal.Serial, "Blacksmithing Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Blacksmithing Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)           
-        elif Items.GetPropValue(tal.Serial, "Inscription Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Inscription Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)      
-        elif Items.GetPropValue(tal.Serial, "Cooking Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Cooking Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)         
-        elif Items.GetPropValue(tal.Serial, "Alchemy Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Alchemy Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)       
-        elif Items.GetPropValue(tal.Serial, "Carpentry Exceptional Bonus") >= MinExBonus and Items.GetPropValue(tal.Serial, "Carpentry Bonus") >= MinNormalBonus:
-            Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
-            Misc.Pause(DragDelay)          
+        if Items.GetPropValue(tal.Serial," Exceptional") > MinExBonus:
+            if Items.GetPropValue(tal.Serial, "Tinkering Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)   
+            elif Items.GetPropValue(tal.Serial, "Fletching Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)           
+            elif Items.GetPropValue(tal.Serial, "Tailoring Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)       
+            elif Items.GetPropValue(tal.Serial, "Blacksmithing Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)           
+            elif Items.GetPropValue(tal.Serial, "Inscription Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)      
+            elif Items.GetPropValue(tal.Serial, "Cooking Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)         
+            elif Items.GetPropValue(tal.Serial, "Alchemy Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)       
+            elif Items.GetPropValue(tal.Serial, "Carpentry Bonus") >= MinNormalBonus:
+                Items.Move(tal, Items.FindBySerial(ContainerBackpack), 0)
+                Misc.Pause(DragDelay)                  
         
     def ReloadBeetle(self):
         Mobiles.UseMobile(Player.Serial)
@@ -768,30 +1060,31 @@ class KeepForm(Form):
             f = open("HW.txt","w+")
             for item in self.var:
                 f.write(item + "=" + str(self.var.get(item))+"\n")
+            for item in self.props:
+                f.write(item + "=" + str(self.props.get(item))+"\n")    
             f.close()
         with open("HW.txt") as myfile:
             for line in myfile:
                 name,value = line.partition("=")[::2]
-                if not "start" in name.strip():
-                    self.var[name.strip()] = value.rstrip()
+                if name.startswith("J"):
+                    self.props[name.strip()] = value.rstrip()
+                else:
+                    if not "start" in name.strip():
+                        self.var[name.strip()] = value.rstrip()
      
     def Update(self):
         file = open("HW.txt","w")
         file.seek(0,0)
         for item in self.var:
             file.write(item + "=" + str(self.var.get(item))+"\n")
+        for item in self.props:
+            file.write(item + "=" + str(self.props.get(item))+"\n")
         file.close()
             
     def Flags(self):
-        self.var["recallBank"] = 0
-        self.var["restockBolt"] = 0
-        self.var["recallHW"] = 0
-        self.var["enterHW"] = 0
-        self.var["deliver"] = 0
-        self.var["reloadBeetle"] = 0
-        self.var["goingToNPC"] = 0
-        self.var["goBack"] = 0
-        self.var["checkReward"] = 0
+        self.var["recallBank"] = self.var["restockBolt"] = self.var["recallHW"] = 0
+        self.var["enterHW"] = self.var["deliver"] = self.var["reloadBeetle"] = 0
+        self.var["goingToNPC"] = self.var["goBack"] = self.var["checkReward"] = 0
               
 form = KeepForm()
 Application.Run(form)
