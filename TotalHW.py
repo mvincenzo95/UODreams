@@ -51,7 +51,7 @@ BoltID = 0x1BFB
 class KeepForm(Form):
     ScriptName = 'TotalHW by Rosikcool'
     
-    var = {'number' : 1, 'checked' : False, 'start' : datetime.now(), 'recallBank' : 0, 'restockBolt' : 0, 
+    var = {'magery': "True", 'chivalry' : "False",'posX' : 0, 'posY': 0,'home' : "True", 'innkeeper': "False", 'number' : 1, 'checked' : False, 'start' : datetime.now(), 'recallBank' : 0, 'restockBolt' : 0, 
     'recallHW' : 0, 'enterHW' : 0, 'goingToNPC' : 0, 'deliver' : 0, 'reloadBeetle' : 0,
     'goBack' : 0, 'checkReward' : 0, 'completedQuest' : 0, 'kitHwFound' : 0, 'kitYewFound' : 0,
     'oldTime' : "0001-01-01 00:00:00", 'actualTime' : "0001-01-01 00:00:00", 'beetleSerial' : 0, 'containerBackpack' : 0, 'containerBank' : 0,
@@ -62,223 +62,244 @@ class KeepForm(Form):
     'Jlowermanacost' : 0, 'Jlowerreagentcost' : 0, 'Jluck' : 0, 'Jspelldamageincrease' : 0, 'Jstrengthbonus' : 0}
     
     def __init__(self):
+        elements = []
         self.BackColor = Color.FromArgb(25,25,25)
         self.ForeColor = Color.FromArgb(231,231,231)
-        self.Size = Size(320, 330)
+        self.Size = Size(340, 355)
         self.Text = '{0}'.format(self.ScriptName)
         self.CenterToScreen()
         self.TopMost = True
         self.LoadFile()
         self.jf = Form()
         
+        #SettingsBox
+        self.settingsBox = GroupBox()
+        self.settingsBox.BackColor = Color.FromArgb(35,35,35)
+        self.settingsBox.Size = Size(310, 310)
+        self.settingsBox.Location = Point(5, 2)
+        self.settingsBox.ForeColor = Color.FromArgb(231,231,231)
+        self.settingsBox.Text = 'Settings'
+        
         #InfoLabel
         self.Info = Label()
-        self.Info.Size = Size(380,15)
-        self.Info.Location = Point(0,0)
+        self.Info.Size = Size(295,15)
+        self.Info.Location = Point(10,15)
         self.Info.Text = "Script settings, if u want to change delays, check the code."
+        elements.append(self.Info)
         
         #BeetleLabel
         self.Pet = Label()
         self.Pet.Size = Size(200,15)
-        self.Pet.Location = Point(0,20)
+        self.Pet.Location = Point(10,35)
         self.Pet.Text = "Beetle serial: {0}".format(self.var['beetleSerial'])
+        elements.append(self.Pet)
         
         #BeetleText
         self.PetT = Button()
         self.PetT.Text = "Set"
         self.PetT.Size = Size(80,20)
-        self.PetT.Location = Point(210,15)
+        self.PetT.Location = Point(210,30)
         self.PetT.Click += self.setBeetle
+        elements.append(self.PetT)
         
         #ContainerBackpack
         self.ContainerB = Label()
         self.ContainerB.Size = Size(200,15)
-        self.ContainerB.Location = Point(0,40)
+        self.ContainerB.Location = Point(10,55)
         self.ContainerB.Text = "Container backpack serial: {0}".format(self.var['containerBackpack'])
+        elements.append(self.ContainerB)
         
         #ContainerBackpackText
         self.ContainerBT = Button()
         self.ContainerBT.Text = "Set"
         self.ContainerBT.Size = Size(80,20)
-        self.ContainerBT.Location = Point(210,35)
+        self.ContainerBT.Location = Point(210,50)
         self.ContainerBT.Click += self.setContainerBackpack
+        elements.append(self.ContainerBT)
         
         #ContainerBank
         self.ContainerBank = Label()
         self.ContainerBank.Size = Size(200,15)
-        self.ContainerBank.Location = Point(0,60)
+        self.ContainerBank.Location = Point(10,75)
         self.ContainerBank.Text = "Container inside bank serial: {0}".format(self.var['containerBank'])
+        elements.append(self.ContainerBank)
         
         #ContainerBankT
         self.ContainerBankT = Button()
         self.ContainerBankT.Text = "Set"
         self.ContainerBankT.Size = Size(80,20)
-        self.ContainerBankT.Location = Point(210,55)
+        self.ContainerBankT.Location = Point(210,70)
         self.ContainerBankT.Click += self.setContainerBankT
+        elements.append(self.ContainerBankT)
         
         #Runebook
         self.Runebook = Label()
         self.Runebook.Size = Size(200,15)
-        self.Runebook.Location = Point(0,80)
+        self.Runebook.Location = Point(10,95)
         self.Runebook.Text = "Runebook serial: {0}".format(self.var['runebook'])
+        elements.append(self.Runebook)
         
         #RunebookT
         self.RunebookT = Button()
         self.RunebookT.Text = "Set"
         self.RunebookT.Size = Size(80,20)
-        self.RunebookT.Location = Point(210,75)
+        self.RunebookT.Location = Point(210,90)
         self.RunebookT.Click += self.setRunebook
+        elements.append(self.RunebookT)
         
         #Hints
         self.Hint = Label()
-        self.Hint.Size = Size(300,12)
-        self.Hint.Location = Point(20,100)
-        self.Hint.Text = "1° rune must be a Bank, 2° HW entrance"
+        self.Hint.Size = Size(270,12)
+        self.Hint.Location = Point(20,115)
+        self.Hint.Text = "Runes: 1°- Bank, 2°- HW Entrance, 3°- Home/Inn"
+        elements.append(self.Hint)
         
         #BonusTalismansN
         self.BonusN = Label()
         self.BonusN.Size = Size(150,15)
-        self.BonusN.Location = Point(0,120)
+        self.BonusN.Location = Point(10,135)
         self.BonusN.Text = "Talisman min normal bonus: "
+        elements.append(self.BonusN)
         
         #BonusTalismansNB
         self.BonusNB = TextBox()
         self.BonusNB.Size = Size(30,15)
-        self.BonusNB.Location = Point(151,119)
+        self.BonusNB.Location = Point(161,130)
         self.BonusNB.Text = "{0}".format(self.var['minBonus'])
+        elements.append(self.BonusNB)
         
         #BonusTalismanNBB
         self.BonusNBB = Button()
         self.BonusNBB.Text = "Set"
         self.BonusNBB.Size = Size(80,20)
-        self.BonusNBB.Location = Point(210,115)
+        self.BonusNBB.Location = Point(210,130)
         self.BonusNBB.Click += self.setNormalBonus
+        elements.append(self.BonusNBB)
         
         #BonusTalismansE
         self.BonusE = Label()
         self.BonusE.Size = Size(150,15)
-        self.BonusE.Location = Point(0,140)
+        self.BonusE.Location = Point(10,155)
         self.BonusE.Text = "Talisman: min except bonus: "
+        elements.append(self.BonusE)
         
         #BonusTalismansEB
         self.BonusEB = TextBox()
         self.BonusEB.Size = Size(30,15)
-        self.BonusEB.Location = Point(151,139)
+        self.BonusEB.Location = Point(161,150)
         self.BonusEB.Text = "{0}".format(self.var['exBonus'])
+        elements.append(self.BonusEB)
         
         #BonusTalismanEBB
         self.BonusEBB = Button()
         self.BonusEBB.Text = "Set"
         self.BonusEBB.Size = Size(80,20)
-        self.BonusEBB.Location = Point(210,140)
+        self.BonusEBB.Location = Point(210,150)
         self.BonusEBB.Click += self.setExecBonus
+        elements.append(self.BonusEBB)
+        
+        #HomeB
+        self.homeB = Button()
+        self.homeB.Text = "Recall Settings"
+        self.homeB.Size = Size(100,20)
+        self.homeB.Location = Point(190,185)
+        self.homeB.Click += self.setHome
+        elements.append(self.homeB)
         
         #TrashDelay
         self.Trash = Label()
-        self.Trash.Size = Size(300,15)
-        self.Trash.Location = Point(0,160)
+        self.Trash.Size = Size(150,15)
+        self.Trash.Location = Point(10,175)
         self.Trash.Text = "Trash delay: {0} ms".format(TrashDelay)
+        elements.append(self.Trash)
         
         #DragDelay
         self.Drag = Label()
-        self.Drag.Size = Size(300,15)
-        self.Drag.Location = Point(0,180)
+        self.Drag.Size = Size(150,15)
+        self.Drag.Location = Point(10,195)
         self.Drag.Text = "Drag delay: {0} ms".format(DragDelay)
+        elements.append(self.Drag)
         
         #Timeout
         self.Timeout = Label()
-        self.Timeout.Size = Size(300,15)
-        self.Timeout.Location = Point(0,200)
+        self.Timeout.Size = Size(270,15)
+        self.Timeout.Location = Point(10,215)
         self.Timeout.Text = "Timeout on wait action delay: {0} ms".format(TimeoutOnWaitAction)
+        elements.append(self.Timeout)
         
         #MoveAmount
         self.MoveAmount = Label()
         self.MoveAmount.Size = Size(155,15)
-        self.MoveAmount.Location = Point(0,220)
+        self.MoveAmount.Location = Point(10,235)
         self.MoveAmount.Text = "Bolts from beetle to backpack: "
+        elements.append(self.MoveAmount)
         
         #MoveAmountT
         self.MoveAmountT = TextBox()
         self.MoveAmountT.Size = Size(40,15)
-        self.MoveAmountT.Location = Point(156,219)
+        self.MoveAmountT.Location = Point(166,230)
         self.MoveAmountT.Text = "{0} ".format(int(self.var['moveAmount']))
+        elements.append(self.MoveAmountT)
         
         #MoveAmountB
         self.MoveAmountB = Button()
         self.MoveAmountB.Text = "Set"
         self.MoveAmountB.Size = Size(80,20)
-        self.MoveAmountB.Location = Point(210,215)
+        self.MoveAmountB.Location = Point(210,230)
         self.MoveAmountB.Click += self.setMoveAmount
-        
+        elements.append(self.MoveAmountB)
         
         #StartButton
         self.btnStart = Button()
         self.btnStart.Text = 'Start'
         self.btnStart.BackColor = Color.FromArgb(50,50,50)
         self.btnStart.Size = Size(50, 30)
-        self.btnStart.Location = Point(120, 260)
+        self.btnStart.Location = Point(140, 260)
         self.btnStart.FlatStyle = FlatStyle.Flat
         self.btnStart.FlatAppearance.BorderSize = 1
         self.btnStart.Click += self.btnStartPressed
+        elements.append(self.btnStart)
         
         #DonateLink
         self.btnDonate = Button()
         self.btnDonate.Text = 'Donate'
         self.btnDonate.BackColor = Color.FromArgb(50,50,50)
         self.btnDonate.Size = Size(50, 30)
-        self.btnDonate.Location = Point(0, 260)
+        self.btnDonate.Location = Point(20, 260)
         self.btnStart.FlatStyle = FlatStyle.Flat
         self.btnStart.FlatAppearance.BorderSize = 1
         self.btnDonate.Click += self.linkDonatePressed
+        elements.append(self.btnDonate)
         
         #JewelButton
         self.btnJewel = Button()
         self.btnJewel.Text = 'Jewels'
         self.btnJewel.BackColor = Color.FromArgb(50,50,50)
         self.btnJewel.Size = Size(50, 30)
-        self.btnJewel.Location = Point(60, 260)
+        self.btnJewel.Location = Point(80, 260)
         self.btnJewel.FlatStyle = FlatStyle.Flat
         self.btnJewel.FlatAppearance.BorderSize = 1
         self.btnJewel.Click += self.jewelPressed
+        elements.append(self.btnJewel)
         
         #ResetButton
         self.btnReset = Button()
         self.btnReset.Text = 'Reset Stats'
         self.btnReset.BackColor = Color.FromArgb(50,50,50)
         self.btnReset.Size = Size(90, 30)
-        self.btnReset.Location = Point(180, 260)
+        self.btnReset.Location = Point(200, 260)
         self.btnReset.FlatStyle = FlatStyle.Flat
         self.btnReset.FlatAppearance.BorderSize = 1
         self.btnReset.Click += self.btnResetPressed
+        elements.append(self.btnReset)
         
-        self.Controls.Add(self.Info)
-        self.Controls.Add(self.Pet)
-        self.Controls.Add(self.PetT)
-        self.Controls.Add(self.ContainerB)
-        self.Controls.Add(self.ContainerBT)
-        self.Controls.Add(self.ContainerBank)
-        self.Controls.Add(self.ContainerBankT)
-        self.Controls.Add(self.Runebook)
-        self.Controls.Add(self.RunebookT)
-        self.Controls.Add(self.Hint)
-        self.Controls.Add(self.BonusN)
-        self.Controls.Add(self.BonusE)
-        self.Controls.Add(self.BonusNB)
-        self.Controls.Add(self.BonusNBB)
-        self.Controls.Add(self.BonusEB)
-        self.Controls.Add(self.BonusEBB)
-        self.Controls.Add(self.Trash)
-        self.Controls.Add(self.Drag)
-        self.Controls.Add(self.Timeout)
-        self.Controls.Add(self.MoveAmount)
-        self.Controls.Add(self.MoveAmountT)
-        self.Controls.Add(self.MoveAmountB)
-        self.Controls.Add(self.btnStart)   
-        self.Controls.Add(self.btnReset)
-        self.Controls.Add(self.btnDonate)
-        self.Controls.Add(self.btnJewel)    
+        #Adding Elements
+        for elem in elements:
+            self.settingsBox.Controls.Add(elem) 
+        self.Controls.Add(self.settingsBox)
         
     def btnStartPressed(self, send, args):
+        elements = []
         self.var["beetleSerial"] = self.PetT.Text
         self.var["containerBank"] = self.ContainerBT.Text
         self.var["containerBackpack"] = self.ContainerBankT.Text
@@ -296,35 +317,40 @@ class KeepForm(Form):
         #self.var["oldTime"] = datetime.strptime(str(self.var["oldTime"]),"%Y-%m-%d %H:%M:%S")
         
         #TimePassed
-        self.TimePassed = Label()
-        self.TimePassed.Size = Size(380,15)
-        self.TimePassed.Location = Point(0,15)
-        self.var["actualTime"] = datetime.now() - self.var["start"]
-        self.TimePassed.Text = "Time " + str((self.var["actualTime"] + self.var["oldTime"]).time())
+        #self.TimePassed = Label()
+        #self.TimePassed.Size = Size(380,15)
+        #self.TimePassed.Location = Point(0,15)
+        #self.var["actualTime"] = datetime.now() - self.var["start"]
+        #self.TimePassed.Text = "Time " + str((self.var["actualTime"] + self.var["oldTime"]).time())
+        #elements.append(self.TimePassed)
         
         #Step
         self.Step = Label()
         self.Step.Size = Size(380,15)
         self.Step.Location = Point(0,30)
         self.Step.Text = "Step: ..."
+        elements.append(self.Step)
         
         #CompletedQuests
         self.CompletedQuests = Label()
         self.CompletedQuests.Size = Size(380,15)
         self.CompletedQuests.Location = Point(0,45)
         self.CompletedQuests.Text = "Completed quests: {0}".format(self.var["completedQuest"])
+        elements.append(self.CompletedQuests)
         
         #KitYewFound
         self.KitYewFound = Label()
         self.KitYewFound.Size = Size(380,15)
         self.KitYewFound.Location = Point(0,60)
         self.KitYewFound.Text = "Kit yew found: {0}".format(self.var["kitYewFound"])
+        elements.append(self.KitYewFound)
         
         #KitHwFound
         self.KitHwFound = Label()
         self.KitHwFound.Size = Size(380,15)
         self.KitHwFound.Location = Point(0,75)
         self.KitHwFound.Text = "Kit hw found: {0}".format(self.var["kitHwFound"])
+        elements.append(self.KitHwFound)
         
         #StopButton
         self.btnStop = Button()
@@ -335,6 +361,7 @@ class KeepForm(Form):
         self.btnStop.FlatStyle = FlatStyle.Flat
         self.btnStop.FlatAppearance.BorderSize = 1
         self.btnStop.Click += self.btnStopPressed
+        elements.append(self.btnStop)
         
         #PauseButton
         self.btnPause = Button()
@@ -345,14 +372,7 @@ class KeepForm(Form):
         self.btnPause.FlatStyle = FlatStyle.Flat
         self.btnPause.FlatAppearance.BorderSize = 1
         self.btnPause.Click += self.btnPausePressed
-        
-        self.Controls.Add(self.Step)
-        self.Controls.Add(self.CompletedQuests)
-        self.Controls.Add(self.KitYewFound)
-        self.Controls.Add(self.KitHwFound)
-        self.Controls.Add(self.btnPause)
-        self.Controls.Add(self.btnStop)
-        #self.Controls.Add(self.TimePassed)
+        elements.append(self.btnPause)
         
         #Timer
         self.time = Timer(Container())
@@ -361,14 +381,168 @@ class KeepForm(Form):
         self.time.Tick += self.OnTick
         
         #Timer2
-        self.time2 = Timer(Container())
-        self.time2.Enabled = False
-        self.time2.Interval = 999
-        self.time2.Tick += self.OnTick2
+        #self.time2 = Timer(Container())
+        #self.time2.Enabled = False
+        #self.time2.Interval = 999
+        #self.time2.Tick += self.OnTick2
+        
+        #Adding Elements
+        for elem in elements:
+            self.Controls.Add(elem) 
 
     def linkDonatePressed(self, send, args):
         Process.Start("IExplore", 'paypal.me/vincenzomucciante')
         
+    def setHome(self, send, args): 
+        elements = []
+        
+        self.h = Form()
+        self.h.BackColor = Color.FromArgb(25,25,25)
+        self.h.ForeColor = Color.FromArgb(231,231,231)
+        self.h.Size = Size(322, 200)
+        self.h.Text = '{0}'.format(self.ScriptName)
+        self.h.TopMost = True
+        
+        #ControlHome
+        self.controlH = GroupBox()
+        self.controlH.Size = Size(150, 60)
+        self.controlH.Location = Point(2, 0)
+        self.controlH.ForeColor = Color.FromArgb(231,231,231)
+        self.controlH.Text = 'Spot'
+        elements.append(self.controlH)
+        
+        #Home
+        self.home = RadioButton()
+        self.home.Text = 'Home'
+        self.home.Checked = eval(self.var['home'])
+        self.home.Location = Point(10, 15)
+        self.home.BackColor = Color.FromArgb(25,25,25)
+        self.home.ForeColor = Color.FromArgb(231,231,231)
+        self.home.Size = Size(60, 30)
+        self.home.CheckedChanged += self.checkHome
+        self.controlH.Controls.Add(self.home)
+        
+        #Innkeeper
+        self.inn = RadioButton()
+        self.inn.Text = 'Innkeeper'
+        self.inn.Checked = eval(self.var['innkeeper'])
+        self.inn.Location = Point(71, 15)
+        self.inn.BackColor = Color.FromArgb(25,25,25)
+        self.inn.ForeColor = Color.FromArgb(231,231,231)
+        self.inn.Size = Size(75, 30)
+        self.inn.CheckedChanged += self.checkHome
+        self.controlH.Controls.Add(self.inn)
+        
+        #Skill
+        self.skillH = GroupBox()
+        self.skillH.Size = Size(150, 60)
+        self.skillH.Location = Point(151, 0)
+        self.skillH.ForeColor = Color.FromArgb(231,231,231)
+        self.skillH.Text = 'Skill'
+        elements.append(self.skillH)
+        
+        #Magery
+        self.magery = RadioButton()
+        self.magery.Text = 'Magery'
+        self.magery.Checked = eval(self.var['magery'])
+        self.magery.Location = Point(10, 15)
+        self.magery.BackColor = Color.FromArgb(25,25,25)
+        self.magery.ForeColor = Color.FromArgb(231,231,231)
+        self.magery.Size = Size(60, 30)
+        self.skillH.Controls.Add(self.magery)
+        
+        #Chivalry
+        self.chivalry = RadioButton()
+        self.chivalry.Text = 'Chivalry'
+        self.chivalry.Checked = eval(self.var['chivalry'])
+        self.chivalry.Location = Point(71, 15)
+        self.chivalry.BackColor = Color.FromArgb(25,25,25)
+        self.chivalry.ForeColor = Color.FromArgb(231,231,231)
+        self.chivalry.Size = Size(75, 30)
+        self.skillH.Controls.Add(self.chivalry)
+
+        #PositionX
+        self.positionX = Label()
+        self.positionX.Size = Size(100,15)
+        self.positionX.Location = Point(80,75)
+        self.positionX.Text = "X position home: "
+        elements.append(self.positionX)
+        
+        #PositionXV
+        self.positionXV = TextBox()
+        self.positionXV.Size = Size(30,15)
+        self.positionXV.Location = Point(181,74)
+        self.positionXV.Text = "{0}".format(self.var['posX'])
+        elements.append(self.positionXV)
+        
+        #PositionY
+        self.positionY = Label()
+        self.positionY.Size = Size(100,15)
+        self.positionY.Location = Point(80,100)
+        self.positionY.Text = "Y position home: "
+        elements.append(self.positionY)
+        
+        #PositionYV
+        self.positionYV = TextBox()
+        self.positionYV.Size = Size(30,15)
+        self.positionYV.Location = Point(181,99)
+        self.positionYV.Text = "{0}".format(self.var['posY'])
+        elements.append(self.positionYV)
+     
+        #CloseButton
+        self.btnCloseH = Button()
+        self.btnCloseH.Text = 'Close'
+        self.btnCloseH.BackColor = Color.FromArgb(50,50,50)
+        self.btnCloseH.Size = Size(50, 30)
+        self.btnCloseH.Location = Point(120, 130)
+        self.btnCloseH.FlatStyle = FlatStyle.Flat
+        self.btnCloseH.FlatAppearance.BorderSize = 1
+        self.btnCloseH.Click += self.btnClosePressedH
+        elements.append(self.btnCloseH)
+          
+        self.checkHome(send,args)
+        
+        for elem in elements:
+            self.h.Controls.Add(elem)
+                
+        self.h.ShowDialog() 
+     
+    def checkHome(self, send, args):   
+        if self.home.Checked:
+            self.positionXV.ReadOnly = False
+            self.positionXV.BorderStyle = BorderStyle.Fixed3D
+            self.positionXV.ResetBackColor()
+            self.positionXV.ResetForeColor()
+            self.positionYV.ReadOnly = False
+            self.positionYV.BorderStyle = BorderStyle.Fixed3D
+            self.positionYV.ResetBackColor()
+            self.positionYV.ResetForeColor()
+        else:
+            self.positionXV.ReadOnly = True
+            self.positionXV.BorderStyle = BorderStyle.None
+            self.positionXV.BackColor = Color.FromArgb(25,25,25)
+            self.positionXV.ForeColor = Color.FromArgb(231,231,231)
+            self.positionYV.ReadOnly = True
+            self.positionYV.BorderStyle = BorderStyle.None
+            self.positionYV.BackColor = Color.FromArgb(25,25,25)
+            self.positionYV.ForeColor = Color.FromArgb(231,231,231)
+    
+    def btnClosePressedH(self,send,args):
+        while len(self.h.Controls) > 0:
+            for ctr in self.h.Controls:
+                self.h.Controls.Remove(ctr)
+                
+        self.var['magery'] = str(self.magery.Checked)
+        self.var['chivalry'] = str(self.chivalry.Checked)
+        self.var['home'] = str(self.home.Checked)
+        self.var['innkeeper'] = str(self.inn.Checked)
+        self.var['posX'] = str(self.positionXV.Text)
+        self.var['posY'] = int(self.positionYV.Text)
+        self.Update()
+        
+        self.h.Close()    
+        
+            
     def btnPausePressed(self, send, args):
         self.Step.Text = "Paused."
         self.time.Enabled = False
@@ -398,19 +572,44 @@ class KeepForm(Form):
     def btnStopPressed(self, send, args):
         self.Flags()
         self.Update()
-        self.Step.Text = "Finish."
+        
         #self.time2.Enabled = False
         self.time.Enabled = False
         self.Update()
         self.Controls.Remove(self.btnStop)
         self.Controls.Remove(self.btnPause)
-    
+        
+        
+        if eval(self.var['home']):
+            self.Step.Text = "Going Home."
+        else:
+            self.Step.Text = "Going Innkeeper."
+            
+        self.GoBack()
+        playerx = Player.Position.X
+        playery = Player.Position.Y    
+        while Player.Position.X == playerx and Player.Position.Y == playery:
+            Items.UseItem(int(self.var['runebook'],16))
+            Gumps.WaitForGump(1431013363, 10000)
+            if eval(self.var['magery']):
+                Gumps.SendAction(1431013363, 17)
+            else:
+                Gumps.SendAction(1431013363, 19)
+            Misc.Pause(300)    
+        if eval(self.var['home']):
+            while Player.Position.X != int(self.var['posX']) or Player.Position.Y != int(self.var['posY']):
+                Player.PathFindTo(int(self.var['posX']),int(self.var['posY']),Player.Position.Z)
+                Misc.Pause(50)
+            
+            
     def btnResetPressed(self, send, args):
         self.var["completedQuest"] = 0
+        Misc.SendMessage(self.var["completedQuest"])
         self.var["actualTime"] = "0001-01-01 00:00:00"
         self.var["oldTime"] = "0001-01-01 00:00:00"
         self.var["kitHwFound"] = 0
         self.var["kitYewFound"] = 0
+        self.Update()
     
     def setBeetle(self, send, args):
         self.var["beetleSerial"] = hex(Target.PromptTarget())
@@ -460,6 +659,8 @@ class KeepForm(Form):
         self.MoveAmountT.ForeColor = Color.FromArgb(231,231,231)
     
     def jewelPressed(self, send, args):
+        elements = []
+        
         self.jf = Form()
         self.jf.BackColor = Color.FromArgb(25,25,25)
         self.jf.ForeColor = Color.FromArgb(231,231,231)
@@ -472,6 +673,7 @@ class KeepForm(Form):
         self.Info.Size = Size(170,15)
         self.Info.Location = Point(0,0)
         self.Info.Text = "Jewel Settings.         Take jewels "
+        elements.append(self.Info)
         
         #CheckBox
         self.check = CheckBox()
@@ -479,12 +681,14 @@ class KeepForm(Form):
         self.check.Location = Point(171,-5)
         self.check.Checked = eval(self.var['checked'])
         self.check.CheckedChanged += self.checkedBox
+        elements.append(self.check)
         
         #DamageIncrease
         self.damageIncrease = Label()
         self.damageIncrease.Size = Size(140,15)
         self.damageIncrease.Location = Point(0,20)
         self.damageIncrease.Text = "Damage Increase: "
+        elements.append(self.damageIncrease)
         
         #DamageIncreaseV
         self.damageIncreaseV = TextBox()
@@ -492,162 +696,189 @@ class KeepForm(Form):
         self.damageIncreaseV.Location = Point(150,19)
         self.damageIncreaseV.Text = "{0}".format(self.props['Jdamageincrease'])
         self.damageIncreaseV.ReadOnly = True
+        elements.append(self.damageIncreaseV)
         
         #DefenseChanceIncrease
         self.defenseChanceIncrease = Label()
         self.defenseChanceIncrease.Size = Size(140,15)
         self.defenseChanceIncrease.Location = Point(0,40)
         self.defenseChanceIncrease.Text = "Defense Chance Increase: "
+        elements.append(self.defenseChanceIncrease)
         
         #DefenseChanceIncreaseV
         self.defenseChanceIncreaseV = TextBox()
         self.defenseChanceIncreaseV.Size = Size(30,15)
         self.defenseChanceIncreaseV.Location = Point(150,39)
         self.defenseChanceIncreaseV.Text = "{0}".format(self.props['Jdefensechanceincrease'])
+        elements.append(self.defenseChanceIncreaseV)
         
         #DexterityBonus
         self.dexterityBonus = Label()
         self.dexterityBonus.Size = Size(140,15)
         self.dexterityBonus.Location = Point(0,60)
         self.dexterityBonus.Text = "Dexterity Bonus: "
+        elements.append(self.dexterityBonus)
         
         #DexterityBonusV
         self.dexterityBonusV = TextBox()
         self.dexterityBonusV.Size = Size(30,15)
         self.dexterityBonusV.Location = Point(150,59)
         self.dexterityBonusV.Text = "{0}".format(self.props['Jdexteritybonus'])
+        elements.append(self.dexterityBonusV)
         
         #EnhancePotions
         self.enhancePotions = Label()
         self.enhancePotions.Size = Size(140,15)
         self.enhancePotions.Location = Point(0,80)
         self.enhancePotions.Text = "Enhance Potions: "
+        elements.append(self.enhancePotions)
         
         #EnhancePotionsV
         self.enhancePotionsV = TextBox()
         self.enhancePotionsV.Size = Size(30,15)
         self.enhancePotionsV.Location = Point(150,79)
         self.enhancePotionsV.Text = "{0}".format(self.props['Jenhancepotions'])
+        elements.append(self.enhancePotionsV)
         
         #FasterCastRecovery
         self.fasterCastRecovery = Label()
         self.fasterCastRecovery.Size = Size(140,15)
         self.fasterCastRecovery.Location = Point(0,100)
         self.fasterCastRecovery.Text = "Faster Cast Recovery: "
+        elements.append(self.fasterCastRecovery)
         
         #FasterCastRecoveryV
         self.fasterCastRecoveryV = TextBox()
         self.fasterCastRecoveryV.Size = Size(30,15)
         self.fasterCastRecoveryV.Location = Point(150,99)
         self.fasterCastRecoveryV.Text = "{0}".format(self.props['Jfastercastrecovery'])
+        elements.append(self.fasterCastRecoveryV)
         
         #FasterCasting
         self.fasterCasting = Label()
         self.fasterCasting.Size = Size(140,15)
         self.fasterCasting.Location = Point(0,120)
         self.fasterCasting.Text = "Faster Casting: "
+        elements.append(self.fasterCasting)
         
         #FasterCastingV
         self.fasterCastingV = TextBox()
         self.fasterCastingV.Size = Size(30,15)
         self.fasterCastingV.Location = Point(150,119)
         self.fasterCastingV.Text = "{0}".format(self.props['Jfastercasting'])
+        elements.append(self.fasterCastingV)
         
         #HitChanceIncrease
         self.hitChanceIncrease = Label()
         self.hitChanceIncrease.Size = Size(140,15)
         self.hitChanceIncrease.Location = Point(0,140)
         self.hitChanceIncrease.Text = "Hit Chance Increase: "
+        elements.append(self.hitChanceIncrease)
         
         #HitChanceIncreaseV
         self.hitChanceIncreaseV = TextBox()
         self.hitChanceIncreaseV.Size = Size(30,15)
         self.hitChanceIncreaseV.Location = Point(150,139)
         self.hitChanceIncreaseV.Text = "{0}".format(self.props['Jhitchanceincrease'])
+        elements.append(self.hitChanceIncreaseV)
         
         #IntelligenceBonus
         self.intelligenceBonus = Label()
         self.intelligenceBonus.Size = Size(140,15)
         self.intelligenceBonus.Location = Point(0,160)
         self.intelligenceBonus.Text = "Intelligence Bonus: "
+        elements.append(self.intelligenceBonus)
         
         #IntelligenceBonusV
         self.intelligenceBonusV = TextBox()
         self.intelligenceBonusV.Size = Size(30,15)
         self.intelligenceBonusV.Location = Point(150,159)
         self.intelligenceBonusV.Text = "{0}".format(self.props['Jintelligencebonus'])
+        elements.append(self.intelligenceBonusV)
         
         #LowerManaCost
         self.lowerManaCost = Label()
         self.lowerManaCost.Size = Size(140,15)
         self.lowerManaCost.Location = Point(0,180)
         self.lowerManaCost.Text = "Lower Mana Cost: "
+        elements.append(self.lowerManaCost)
         
         #LowerManaCostV
         self.lowerManaCostV = TextBox()
         self.lowerManaCostV.Size = Size(30,15)
         self.lowerManaCostV.Location = Point(150,179)
         self.lowerManaCostV.Text = "{0}".format(self.props['Jlowermanacost'])
+        elements.append(self.lowerManaCostV)
         
         #LowerReagentCost
         self.lowerReagentCost = Label()
         self.lowerReagentCost.Size = Size(140,15)
         self.lowerReagentCost.Location = Point(0,200)
         self.lowerReagentCost.Text = "Lower Reagent Cost: "
+        elements.append(self.lowerReagentCost)
         
         #LowerReagentCostV
         self.lowerReagentCostV = TextBox()
         self.lowerReagentCostV.Size = Size(30,15)
         self.lowerReagentCostV.Location = Point(150,199)
         self.lowerReagentCostV.Text = "{0}".format(self.props['Jlowerreagentcost'])
+        elements.append(self.lowerReagentCostV)
         
         #Luck
         self.luck = Label()
         self.luck.Size = Size(140,15)
         self.luck.Location = Point(0,220)
         self.luck.Text = "Luck: "
+        elements.append(self.luck)
         
         #LuckV
         self.luckV = TextBox()
         self.luckV.Size = Size(30,15)
         self.luckV.Location = Point(150,219)
         self.luckV.Text = "{0}".format(self.props['Jluck'])
+        elements.append(self.luckV)
         
         #SpellDamageIncrease
         self.spellDamageIncrease = Label()
         self.spellDamageIncrease.Size = Size(140,15)
         self.spellDamageIncrease.Location = Point(0,240)
         self.spellDamageIncrease.Text = "Spell Damage Increase: "
+        elements.append(self.spellDamageIncrease)
         
         #SpellDamageIncreaseV
         self.spellDamageIncreaseV = TextBox()
         self.spellDamageIncreaseV.Size = Size(30,15)
         self.spellDamageIncreaseV.Location = Point(150,239)
         self.spellDamageIncreaseV.Text = "{0}".format(self.props['Jspelldamageincrease'])
+        elements.append(self.spellDamageIncreaseV)
         
         #StrengthBonus
         self.strengthBonus = Label()
         self.strengthBonus.Size = Size(140,15)
         self.strengthBonus.Location = Point(0,260)
         self.strengthBonus.Text = "Strength Bonus: "
+        elements.append(self.strengthBonus)
         
         #StrengthBonusV
         self.strengthBonusV = TextBox()
         self.strengthBonusV.Size = Size(30,15)
         self.strengthBonusV.Location = Point(150,259)
         self.strengthBonusV.Text = "{0}".format(self.props['Jstrengthbonus'])
+        elements.append(self.strengthBonusV)
         
         #Number
         self.number = Label()
         self.number.Size = Size(140,15)
         self.number.Location = Point(0,280)
         self.number.Text = "How much of them at least: "
+        elements.append(self.number)
         
         #NumberV
         self.numberV = TextBox()
         self.numberV.Size = Size(30,15)
         self.numberV.Location = Point(150,279)
         self.numberV.Text = "{0}".format(self.var['number'])
+        elements.append(self.numberV)
         
         #CloseButton
         self.btnClose = Button()
@@ -658,57 +889,14 @@ class KeepForm(Form):
         self.btnClose.FlatStyle = FlatStyle.Flat
         self.btnClose.FlatAppearance.BorderSize = 1
         self.btnClose.Click += self.btnClosePressed
+        elements.append(self.btnClose)
         
-        self.jf.Controls.Add(self.Info)
-        self.jf.Controls.Add(self.damageIncrease)
-        self.jf.Controls.Add(self.damageIncreaseV)
-        self.jf.Controls.Add(self.defenseChanceIncrease)
-        self.jf.Controls.Add(self.defenseChanceIncreaseV)
-        self.jf.Controls.Add(self.dexterityBonus)
-        self.jf.Controls.Add(self.dexterityBonusV)
-        self.jf.Controls.Add(self.enhancePotions)
-        self.jf.Controls.Add(self.enhancePotionsV)
-        self.jf.Controls.Add(self.fasterCastRecovery)
-        self.jf.Controls.Add(self.fasterCastRecoveryV)
-        self.jf.Controls.Add(self.fasterCasting)
-        self.jf.Controls.Add(self.fasterCastingV)
-        self.jf.Controls.Add(self.hitChanceIncrease)
-        self.jf.Controls.Add(self.hitChanceIncreaseV)
-        self.jf.Controls.Add(self.intelligenceBonus)
-        self.jf.Controls.Add(self.intelligenceBonusV)
-        self.jf.Controls.Add(self.lowerManaCost)
-        self.jf.Controls.Add(self.lowerManaCostV)
-        self.jf.Controls.Add(self.lowerReagentCost)
-        self.jf.Controls.Add(self.lowerReagentCostV)
-        self.jf.Controls.Add(self.luck)
-        self.jf.Controls.Add(self.luckV)
-        self.jf.Controls.Add(self.spellDamageIncrease)
-        self.jf.Controls.Add(self.spellDamageIncreaseV)
-        self.jf.Controls.Add(self.strengthBonus)
-        self.jf.Controls.Add(self.strengthBonusV)
-        self.jf.Controls.Add(self.btnClose)
-        self.jf.Controls.Add(self.number)
-        self.jf.Controls.Add(self.numberV)
-        self.jf.Controls.Add(self.check)
+        for elem in elements:
+            self.jf.Controls.Add(elem)
         
-        if self.check.Checked:
-            for ctl in self.jf.Controls:
-                if ctl.GetType() == TextBox:
-                    ctl.ReadOnly = False
-                    ctl.BorderStyle = BorderStyle.Fixed3D
-                    ctl.ResetBackColor()
-                    ctl.ResetForeColor()
-                    
-        else:
-            for ctl in self.jf.Controls:
-                if ctl.GetType() == TextBox:
-                    ctl.ReadOnly = True
-                    ctl.BorderStyle = BorderStyle.None
-                    ctl.BackColor = Color.FromArgb(25,25,25)
-                    ctl.ForeColor = Color.FromArgb(231,231,231) 
+        self.checkedBox(send,args)
         
         self.jf.ShowDialog() 
-   
    
     def btnClosePressed(self,send,args):
         while len(self.jf.Controls) > 0:
@@ -796,9 +984,12 @@ class KeepForm(Form):
             Misc.NoOperation()
 
     def RecallBank(self):
-        Items.UseItem(int(self.var['runebook'],16))
+        Items.UseItem(int(self.var['runebook'],16))   
         Gumps.WaitForGump(1431013363, 10000)
-        Gumps.SendAction(1431013363, 5)
+        if eval(self.var['magery']):
+            Gumps.SendAction(1431013363, 5)
+        else:
+            Gumps.SendAction(1431013363, 7)
         Misc.Pause(500)
         
     def Bank(self):
@@ -868,7 +1059,11 @@ class KeepForm(Form):
         if not Items.FindBySerial(0x403203A5):
             Items.UseItem(int(self.var['runebook'],16))
             Gumps.WaitForGump(1431013363, 10000)
-            Gumps.SendAction(1431013363, 11)
+            if eval(self.var['magery']):
+                Gumps.SendAction(1431013363, 11)
+            else:
+                Gumps.SendAction(1431013363, 13)
+            
             Misc.Pause(500)
         else:
             self.var["recallHW"] = 1
@@ -889,19 +1084,19 @@ class KeepForm(Form):
                 Misc.Pause(200)
             while Player.Position.X != 6994 or Player.Position.Y != 349:
                 Player.PathFindTo(6994,349,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 7005 or Player.Position.Y != 361:
                 Player.PathFindTo(7005,361,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 7015 or Player.Position.Y != 370:    
                 Player.PathFindTo(7015,370,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 7024 or Player.Position.Y != 378:    
                 Player.PathFindTo(7024,378,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 7037 or Player.Position.Y != 378:        
                 Player.PathFindTo(7037,378,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             Misc.Pause(50)
             Items.UseItem(int(self.var['containerBackpack'],16))
             Misc.Pause(50)
@@ -917,7 +1112,7 @@ class KeepForm(Form):
             Gumps.ResetGump()
             Mobiles.UseMobile(QuestGiverSerial)
             Gumps.WaitForGump(2770237747, TimeoutOnWaitAction)
-            if Gumps.LastGumpGetLine(1) == "Lethal Darts":
+            if Gumps.LastGumpTextExist("Lethal Darts"):
                 quests = int(self.var["completedQuest"]) +1
                 self.var["completedQuest"] = quests
                 Gumps.WaitForGump(2770237747, TimeoutOnWaitAction)
@@ -1040,13 +1235,13 @@ class KeepForm(Form):
         if not Items.FindBySerial(0x403203A5):
             while Player.Position.X != 7021 and Player.Position.Y != 372:
                 Player.PathFindTo(7021,372,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 7005 and Player.Position.Y != 361:    
                 Player.PathFindTo(7005,361,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 6994 and Player.Position.Y != 349:      
                 Player.PathFindTo(6994,349,0)
-                Misc.Pause(200)
+                Misc.Pause(50)
             while Player.Position.X != 538 and Player.Position.Y != 992:   
                 Player.PathFindTo(6984,338,0)
                 Misc.Pause(200)    
@@ -1087,5 +1282,4 @@ class KeepForm(Form):
         self.var["goingToNPC"] = self.var["goBack"] = self.var["checkReward"] = 0
               
 form = KeepForm()
-Application.Run(form)
-        
+Application.Run(form)        
