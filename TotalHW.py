@@ -22,7 +22,6 @@ import clr, time
 clr.AddReference("System.Collections")
 clr.AddReference("System.Drawing")
 clr.AddReference("System.Windows.Forms")
-clr.AddReference("System.Diagnostics.Process")
 
 from System.Diagnostics import Process
 from datetime import datetime
