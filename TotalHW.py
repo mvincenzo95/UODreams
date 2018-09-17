@@ -545,7 +545,7 @@ class KeepForm(Form):
     def btnPausePressed(self, send, args):
         self.Step.Text = "Paused."
         self.time.Enabled = False
-        self.time2.Enabled = False
+        #self.time2.Enabled = False
         self.Controls.Remove(self.btnPause)
         self.Controls.Remove(self.btnStop)
         
@@ -566,7 +566,7 @@ class KeepForm(Form):
         self.Controls.Add(self.btnPause)
         self.Controls.Add(self.btnStop)
         self.time.Enabled = True
-        self.time2.Enabled = False
+        #self.time2.Enabled = False
         
     def btnStopPressed(self, send, args):
         self.Flags()
