@@ -1037,7 +1037,7 @@ class KeepForm(Form):
                 Misc.Pause(DragDelay)
                 for numbolt in Items.FindBySerial(int(self.var['containerBank'],16)).Contains:
                     if numbolt.ItemID == BoltID:       
-                        Items.Move(numbolt, Player.Backpack, 4000)
+                        Items.Move(numbolt, Player.Backpack, int(self.var['moveAmount']))
                         break
                 Misc.Pause(DragDelay)
             else:
