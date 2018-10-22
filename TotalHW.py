@@ -4,7 +4,7 @@
 #                                             #
 #       Author: Vincenzo Mucciante            #
 #       Release Date: 14/09/2018              #
-#       Version: 1.0.0                        #
+#       Version: 1.2.0                        #
 #                                             #
 #=============================================#
 #                                             #
@@ -35,8 +35,8 @@ from System.ComponentModel import Container
 
     
 ###User settings
-TrashDelay = 500
-DragDelay = 600
+TrashDelay = 700
+DragDelay = 700
 TimeoutOnWaitAction = 500
 ###
 
@@ -589,11 +589,11 @@ class KeepForm(Form):
         playery = Player.Position.Y    
         while Player.Position.X == playerx and Player.Position.Y == playery:
             Items.UseItem(int(self.var['runebook'],16))
-            Gumps.WaitForGump(1431013363, 10000)
+            Gumps.WaitForGump(1593994358, 10000)
             if eval(self.var['magery']):
-                Gumps.SendAction(1431013363, 17)
+                Gumps.SendAction(1593994358, 17)
             else:
-                Gumps.SendAction(1431013363, 19)
+                Gumps.SendAction(1593994358, 19)
             Misc.Pause(300)    
         if eval(self.var['home']):
             while Player.Position.X != int(self.var['posX']) or Player.Position.Y != int(self.var['posY']):
@@ -984,11 +984,11 @@ class KeepForm(Form):
 
     def RecallBank(self):
         Items.UseItem(int(self.var['runebook'],16))   
-        Gumps.WaitForGump(1431013363, 10000)
+        Gumps.WaitForGump(1593994358, 10000)
         if eval(self.var['magery']):
-            Gumps.SendAction(1431013363, 5)
+            Gumps.SendAction(1593994358, 5)
         else:
-            Gumps.SendAction(1431013363, 7)
+            Gumps.SendAction(1593994358, 7)
         Misc.Pause(500)
         
     def Bank(self):
@@ -1057,11 +1057,11 @@ class KeepForm(Form):
     def RecallHW(self):
         if not Items.FindBySerial(0x403203A5):
             Items.UseItem(int(self.var['runebook'],16))
-            Gumps.WaitForGump(1431013363, 10000)
+            Gumps.WaitForGump(1593994358, 10000)
             if eval(self.var['magery']):
-                Gumps.SendAction(1431013363, 11)
+                Gumps.SendAction(1593994358, 11)
             else:
-                Gumps.SendAction(1431013363, 13)
+                Gumps.SendAction(1593994358, 13)
             
             Misc.Pause(500)
         else:
@@ -1110,12 +1110,12 @@ class KeepForm(Form):
         else:
             Gumps.ResetGump()
             Mobiles.UseMobile(QuestGiverSerial)
-            Gumps.WaitForGump(2770237747, TimeoutOnWaitAction)
+            Gumps.WaitForGump(107079709, TimeoutOnWaitAction)
             if Gumps.LastGumpTextExist("Lethal Darts"):
                 quests = int(self.var["completedQuest"]) +1
                 self.var["completedQuest"] = quests
-                Gumps.WaitForGump(2770237747, TimeoutOnWaitAction)
-                Gumps.SendAction(2770237747, 1)  
+                Gumps.WaitForGump(107079709, TimeoutOnWaitAction)
+                Gumps.SendAction(107079709, 1)  
                 Misc.WaitForContext(Player.Serial, TimeoutOnWaitAction)
                 Misc.ContextReply(Player.Serial, ContextQuestToggleID)
                 Target.WaitForTarget(TimeoutOnWaitAction)
@@ -1126,8 +1126,8 @@ class KeepForm(Form):
                 Target.WaitForTarget(TimeoutOnWaitAction)
                 Target.Cancel()
                 Mobiles.UseMobile(QuestGiverSerial)
-                Gumps.WaitForGump(323772612, TimeoutOnWaitAction)
-                Gumps.SendAction(323772612, 1)
+                Gumps.WaitForGump(3072716675, TimeoutOnWaitAction)
+                Gumps.SendAction(3072716675, 1)
                 self.var["deliver"] = 1
                 self.var["checkReward"] = 0
                 
